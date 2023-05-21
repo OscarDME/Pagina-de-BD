@@ -1,5 +1,23 @@
 <?php
+session_start();
+
+if (isset($_SESSION['id_usuario'])) {
+  header("Location: main.php");
+}
 require 'database.php';
+
+if (!empty($_POST['email']) && !empty($_POST['password'])) {
+    $records = $conn->prepare('SELECT id_usuario, email, password FROM usuario WHERE email = :email');
+    $records->bindParam(':email', $_POST['email']);
+    $records->execute();
+    $results = $records->fetch(PDO::FETCH_ASSOC);
+    if ( $results !== false && count($results) > 0 && password_verify($_POST['password'], $results['password'])) {
+        $_SESSION['id_usuario'] = $results['id_usuario'];
+        header("Location: main.php");
+      } else {
+        $message = 'Algo fue mal ingresado';
+      }
+}
 ?>
 
 <!DOCTYPE html>
@@ -13,18 +31,22 @@ require 'database.php';
     <title>Ingreso</title>
 </head>
 <body>
+<?php require 'header.php' ?>
+<?php if(!empty($message)): ?>
+  <p> <?= $message ?></p>
+<?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div class="container d-flex align-items-center justify-content-center h-100">
         <div class="border p-4 contenedor-login">
             <h3 class="text-center mb-4">Iniciar sesión</h3>
-            <form>
+            <form action="login.php" method="POST">
                 <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Correo electrónico" required>
+                    <input type="email" name="email" class="form-control" placeholder="Correo electrónico" required>
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" placeholder="Contraseña" required>
+                    <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                <button type="submit" value="submit" class="btn btn-primary btn-block" href="Inicio de sesion exitoso">Ingresar</button>
                 <br>
                 <a class="cambio "href="registro.php">¿Deseas registrarte?</a>
             </form>

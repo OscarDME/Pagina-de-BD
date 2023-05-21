@@ -15,6 +15,7 @@ $stmt->bindParam(':fecha', $_POST['fecha']);
 $stmt->bindParam(':genero', $_POST['genero']);
 if ($stmt->execute()) {
     $message = 'Successfully created new user';
+    header("Location: login.php");
   } else {
     $message = 'Sorry there must have been an issue creating your account';
   }
@@ -33,6 +34,10 @@ if ($stmt->execute()) {
 </head>
 <body>
 <body>
+<?php require 'header.php' ?>
+<?php if(!empty($message)): ?>
+  <p> <?= $message ?></p>
+<?php endif; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <div class="container d-flex align-items-center justify-content-center h-100">
         <div class="border p-4 contenedor-login">
@@ -68,7 +73,7 @@ if ($stmt->execute()) {
                     Mujer
                     </label>
                   </div>
-                <button type="submit" value="Submit" class="btn btn-primary btn-block" href="ingreso.php">Ingresar</button>
+                <button type="submit" value="Submit" class="btn btn-primary btn-block" href="login.php">Ingresar</button>
                 <br>
                 <a class="cambio "href="login.php">¿Deseas iniciar sesion?</a>
             </form>
