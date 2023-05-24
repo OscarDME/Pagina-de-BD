@@ -33,7 +33,6 @@ if ($stmt->execute()) {
     <title>Registro</title>
 </head>
 <body>
-<body>
 <?php require 'header.php' ?>
 <?php if(!empty($message)): ?>
   <p> <?= $message ?></p>
