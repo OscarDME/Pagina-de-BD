@@ -1,0 +1,56 @@
+.img-fluid{
+    max-width: 100%;
+    height: auto;
+}
+.contenedor{
+    padding: 0;
+}
+h4{
+    font-size:120px;
+}
+
+.carousel-caption{
+    position: absolute;
+    top: 40px;
+    bottom: auto;
+    text-align: center;
+}
+
+.carousel-inner {
+    height: 600px;
+}
+
+.carousel-img {
+    object-fit: cover;
+    max-height: 100%;
+    max-width: 100%;
+  }
+  .navbar-custom {
+    height: 4rem;
+    font-size: 1.5rem;
+  }
+  
+  .navbar-custom a {
+    font-size: 1.5rem;
+  }
+
+.botones{
+     padding: 3rem;
+}
+
+#logo{
+    height: 220px;
+}
+
+.list-custom{
+    text-align: right;
+}
+.textoa{
+    text-decoration:none !important;
+}
+.img-red{
+    height: 20px;
+    width: 20px;
+}
+
+
