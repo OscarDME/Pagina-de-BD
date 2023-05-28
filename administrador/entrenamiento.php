@@ -32,7 +32,7 @@
                       <li>
                           <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                               <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">Rutinas</span> </a>
-                          <ul class="collapse nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
+                          <ul class="collapse show nav flex-column ms-1" id="submenu1" data-bs-parent="#menu">
                               <li class="w-100">
                                   <a href="ver_rutinas.php" class="nav-link px-0"> <span class="d-none d-sm-inline">Ver rutinas</span></a>
                               </li>
@@ -81,12 +81,6 @@
               </div>
           </div>
           <div class="col py-3">
-            <?php  if(isset($_SESSION['id_usuario'])): ?>
-              <p class="bienvenida" style="font-size: 80px; text-align:center">Bienvenido <?php echo $_SESSION['id_usuario']; ?></p> 
-            <?php endif; ?>
-            <div class="d-flex justify-content-center">
-              <img class="img-fluid mx-auto" src="../assets/img/imagen8.jpg" alt="nada" style="width:60%;">
-            </div>
           </div>
       </div>
   </div>

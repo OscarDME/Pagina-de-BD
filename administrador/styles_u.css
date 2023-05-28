@@ -5,6 +5,10 @@
 .col-8{
     height: 100px;
 }
-.img-fluid{
-    height: 60%;
+.contenedorp{
+    max-width: 800px;
+    margin:0 auto;
+}
+p{
+    font-size: 24px;
 }
