@@ -1,57 +1,56 @@
-
 <?php
 session_start();
 require '../database.php';
 $mensajeEquipo = "";
 $mensajeMusculo = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-if (isset($_POST['equipo'])) {
-    $equipo = $_POST['equipo'];
-    $sql = "INSERT INTO equipo values (NULL, :equipo)";
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':equipo', $equipo);
-        $stmt->execute();
-        $mensajeEquipo = "Equipo agregado correctamente.";
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-    }
-    header("Location: agregar_ejercicios.php");
+    if (isset($_POST['equipo'])) {
+        $equipo = $_POST['equipo'];
+        $sql = "INSERT INTO equipo values (NULL, :equipo)";
+        try {
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':equipo', $equipo);
+            $stmt->execute();
+            $mensajeEquipo = "Equipo agregado correctamente.";
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        header("Location: agregar_ejercicios.php");
         exit();
-}
+    }
 
-if (isset($_POST['musculo'])) {
-    $musculo = $_POST['musculo'];
-    $sql = "INSERT INTO grupo_muscular values (NULL, :musculo)";
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':musculo', $musculo);
-        $stmt->execute();
-        $mensajeMusculo = "Musculo agregado correctamente.";
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
-    }
-    header("Location: agregar_ejercicios.php");
+    if (isset($_POST['musculo'])) {
+        $musculo = $_POST['musculo'];
+        $sql = "INSERT INTO grupo_muscular values (NULL, :musculo)";
+        try {
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':musculo', $musculo);
+            $stmt->execute();
+            $mensajeMusculo = "Musculo agregado correctamente.";
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        header("Location: agregar_ejercicios.php");
         exit();
-}
-if (isset($_POST['ejercicio'])) {
-    $ejercicio = $_POST['ejercicio'];
-    $eMusculo = $_POST['eMusculo'];
-    $eEquipo = $_POST['eEquipo'];
-    $sql = "INSERT INTO ejercicio values (NULL, :ejercicio, :eMusculo, :eEquipo)";
-    try {
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':ejercicio', $ejercicio);
-        $stmt->bindParam(':eMusculo', $eMusculo);
-        $stmt->bindParam(':eEquipo', $eEquipo);
-        $stmt->execute();
-        $mensajeMusculo = "Musculo agregado correctamente.";
-    } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
     }
-    header("Location: agregar_ejercicios.php");
+    if (isset($_POST['ejercicio'])) {
+        $ejercicio = $_POST['ejercicio'];
+        $eMusculo = $_POST['eMusculo'];
+        $eEquipo = $_POST['eEquipo'];
+        $sql = "INSERT INTO ejercicio values (NULL, :ejercicio, :eMusculo, :eEquipo)";
+        try {
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':ejercicio', $ejercicio);
+            $stmt->bindParam(':eMusculo', $eMusculo);
+            $stmt->bindParam(':eEquipo', $eEquipo);
+            $stmt->execute();
+            $mensajeMusculo = "Musculo agregado correctamente.";
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        header("Location: agregar_ejercicios.php");
         exit();
-}
+    }
 }
 ?>
 

@@ -1,4 +1,9 @@
-<?php  session_start(); ?>
+<?php session_start(); ?>
+<?php
+require '../database.php';
+$sql = "SELECT * FROM ejerciciosPagina";
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -100,26 +105,58 @@
                         </div>
                     </div>
                     <div class="col py-3">
-                        <?php
-                        require '../database.php';
-                        $sql = "SELECT * FROM ejerciciosPagina";
-                        $result = $conn->query($sql);
-                        if ($result->rowCount() > 0) {
-                            echo "<table>";
-                            echo "<tr><th>Columna 1</th><th>Columna 2</th><th>Columna 3</th></tr>";
-                            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<tr>";
-                                echo "<td>" . $row["Nombre"] . "</td>";
-                                echo "<td>" . $row["Musculo"] . "</td>";
-                                echo "<td>" . $row["Equipo"] . "</td>";
-                                echo "</tr>";
-                            }
-                            echo "</table>";
-                        } else {
-                            echo "No se encontraron resultados.";
-                        }
-                        $conn = NULL;
+                        <?php /*
+                   require '../database.php';
+                   $sql = "SELECT * FROM ejerciciosPagina";
+                   $result = $conn->query($sql);
+                   if ($result->rowCount() > 0) {
+                       echo "<table>";
+                       echo "<tr><th>Columna 1</th><th>Columna 2</th><th>Columna 3</th></tr>";
+                       while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                           echo "<tr>";
+                           echo "<td>" . $row["Nombre"] . "</td>";
+                           echo "<td>" . $row["Musculo"] . "</td>";
+                           echo "<td>" . $row["Equipo"] . "</td>";
+                           echo "</tr>";
+                       }
+                       echo "</table>";
+                   } else {
+                       echo "No se encontraron resultados.";
+                   }
+                   $conn = NULL; */
                         ?>
+                        <div class="container">
+                            <h1>Tabla de Ejercicios</h1>
+
+                            <?php if ($result->rowCount() > 0): ?>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Músculo</th>
+                                            <th>Equipo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo $row["Nombre"]; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $row["Musculo"]; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $row["Equipo"]; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
+                            <?php else: ?>
+                                <p>No se encontraron resultados.</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
