@@ -505,7 +505,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     <label for="fk_musculo">Grupo Muscular:</label>
                                                     <select class="form-control" id="fk_musculo" name="fk_musculo">
                                                         <?php
-                                                        // Aquí obtienes los grupos musculares de la base de datos y los muestras como opciones en el desplegable
                                                         $sql = "SELECT * FROM grupo_muscular";
                                                         $stmt = $conn->prepare($sql);
                                                         $stmt->execute();
@@ -521,7 +520,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                     <label for="fk_equipo">Equipo:</label>
                                                     <select class="form-control" id="fk_equipo" name="fk_equipo">
                                                         <?php
-                                                        // Aquí obtienes los equipos de la base de datos y los muestras como opciones en el desplegable
                                                         $sql = "SELECT * FROM equipo";
                                                         $stmt = $conn->prepare($sql);
                                                         $stmt->execute();

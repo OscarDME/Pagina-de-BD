@@ -49,11 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($stmt->execute()) {
-        // Redirigir al perfil después de la actualización exitosa
         header('Location: perfil.php');
         exit();
     } else {
-        // Manejar el error en caso de que la actualización falle
         echo "Error al actualizar el perfil. Por favor, inténtalo de nuevo.";
     }
 }

@@ -107,19 +107,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['eliminar_rutina'])) {
-        // Obtener el ID de la rutina a eliminar
         $idRutina = $_POST['id_rutina'];
     
-        // Realizar la eliminación en la base de datos
-        // Aquí debes usar tu lógica para conectar a la base de datos y ejecutar la consulta DELETE
-    
-        // Ejemplo de consulta DELETE
         $sql = "DELETE FROM rutina WHERE id_rutina = :idRutina";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':idRutina', $idRutina);
         $stmt->execute();
     
-        // Redirigir a la página después de eliminar
         header("Location: agregar_rutinas.php");
         exit();
     }
@@ -307,7 +301,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <button type="submit" name="modificar_rutina"
                                     class="btn btn-primary btn-block">Modificar Rutina</button>
                             </form>
-                            <!-- Formulario de modificación de ejercicio en rutina -->
                             <form method="POST" action="agregar_rutinas.php">
                                 <h3>Modificar ejercicio en rutina</h3>
                                 <div class="form-group">

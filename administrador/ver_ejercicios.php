@@ -155,7 +155,6 @@ $result = $conn->query($sql);
                                 <label for="grupoMuscular" class="form-label">Grupo Muscular:</label>
                                 <select name="grupoMuscular" id="grupoMuscular" class="form-select">
                                     <?php
-                                    // Generar opciones del select con grupos musculares usando PHP
                                     require '../database.php';
                                     $sql = "SELECT * FROM grupo_muscular";
                                     $result = $conn->query($sql);
@@ -175,7 +174,6 @@ $result = $conn->query($sql);
                                 <label for="equipo" class="form-label">Equipo:</label>
                                 <select name="equipoId" id="equipoId" class="form-select">
                                     <?php
-                                    // Generar opciones del select con grupos musculares usando PHP
                                     require '../database.php';
                                     $sql = "SELECT * FROM equipo";
                                     $result = $conn->query($sql);
