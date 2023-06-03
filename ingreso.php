@@ -73,7 +73,7 @@
                 Redes sociales:
                 <ul class="list-group">
                     <li class="list-group-item bg-dark"><a href="#"><img src="assets/img/Facebook.png" class="img-fluid img-red" alt="Facebook"></a></li>
-                    <li class="list-group-item bg-dark"><a href="#"></a><img src="assets/img/Instagram.png" class="img-fluid img-red" alt="Instagram"></li>
+                    <li class="list-group-item bg-dark"><a href="https://www.instagram.com/oscardaniel890/"></a><img src="assets/img/Instagram.png" class="img-fluid img-red" alt="Instagram"></li>
                     <li class="list-group-item bg-dark"><a href="#"></a><img src="assets/img/Whatsapp.png" class="img-fluid img-red" alt="Whatsapp"></li>
                 </ul>
             </div>

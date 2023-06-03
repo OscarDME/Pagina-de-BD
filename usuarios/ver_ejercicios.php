@@ -1,4 +1,20 @@
 <?php session_start(); ?>
+<?php
+require '../database.php';
+if (isset($_GET['grupoMuscular'])) {
+    $grupoMuscular = $_GET['grupoMuscular'];
+    $sql = "CALL filtrar_ejercicios_por_grupo('$grupoMuscular')";
+}
+else if(isset($_GET['equipoId'])){
+    $equipo = $_GET['equipoId'];
+    $sql = "CALL filtrar_ejercicios_por_equipo('$equipo')";
+} 
+else {
+    $sql = "SELECT * FROM ejerciciospagina";
+}
+
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +25,7 @@
     <link rel="stylesheet" href="styles_u.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Administrador</title>
+    <title>Usuario</title>
 </head>
 
 <body>
@@ -47,10 +63,6 @@
                                             <a href="ver_rutinas.php" class="nav-link px-0"> <span
                                                     class="d-none d-sm-inline">Ver rutinas</span></a>
                                         </li>
-                                        <li>
-                                            <a href="agregar_rutinas.php" class="nav-link px-0"> <span
-                                                    class="d-none d-sm-inline">Agregar rutinas</span></a>
-                                        </li>
                                     </ul>
                                 </li>
                                 <li>
@@ -66,10 +78,6 @@
                                         <li class="w-100">
                                             <a href="ver_ejercicios.php" class="nav-link px-0"> <span
                                                     class="d-none d-sm-inline">Ver ejercicios</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="agregar_ejercicios.php" class="nav-link px-0"> <span
-                                                    class="d-none d-sm-inline">Agregar ejercicios</span></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -92,7 +100,7 @@
                                 <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
                                     <li><a class="dropdown-item" href="#">Perfil</a></li>
                                     <li>
-                                        <hr class="dropd own-divider">
+                                        <hr class="dropdown-divider">
                                     </li>
                                     <li><a class="dropdown-item" href="../logout.php">Sign out</a></li>
                                 </ul>
@@ -100,96 +108,85 @@
                         </div>
                     </div>
                     <div class="col py-3">
-                        <h3>Rutinas</h3>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                require '../database.php';
-                                $sql = "SELECT * FROM rutina";
-                                $stmt = $conn->prepare($sql);
-                                $stmt->execute();
-                                $rutinas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                foreach ($rutinas as $rutina) {
-                                    echo '<tr>';
-                                    echo '<td>' . $rutina['id_rutina'] . '</td>';
-                                    echo '<td>' . $rutina['nombre'] . '</td>';
-                                    $contador = 0; 
-                                    if ($rutina['contador_entrenamientos'] !== null) {
-                                        $contador = $rutina['contador_entrenamientos'];
-                                    }
-                                    echo '<td>' . $contador . '</td>'; 
-                                    echo '</tr>';
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                        <div class="row align-items-center">
-                            <div class="mt-4">
-                                <h3>Ejercicios de Rutina</h3>
-                                <form method="post" action="">
-                                    <div class="mb-3">
-                                        <label for="selectRutina" class="form-label">Selecciona una rutina:</label>
-                                        <select name="rutina" id="selectRutina" class="form-select">
-                                            <?php
-                                            $sql = "SELECT * FROM rutina";
-                                            $stmt = $conn->prepare($sql);
-                                            $stmt->execute();
-                                            $rutinas = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                                            foreach ($rutinas as $rutina) {
-                                                echo '<option value="' . $rutina['id_rutina'] . '">' . $rutina['nombre'] . '</option>';
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    <button type="submit" name="mostrarEjercicios" class="btn btn-primary">Mostrar
-                                        Ejercicios</button>
-                                </form>
-                                <?php
-                                if (isset($_POST['mostrarEjercicios'])) {
-                                    $rutinaId = $_POST['rutina'];
-                                    $sql = "SELECT * FROM realiza
-                INNER JOIN ejercicio ON realiza.fk_ejercicio = ejercicio.id_ejercicio
-                WHERE realiza.fk_rutina = :rutinaId";
-                                    $stmt = $conn->prepare($sql);
-                                    $stmt->bindParam(':rutinaId', $rutinaId);
-                                    $stmt->execute();
-                                    $ejercicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        <?php 
+                        ?>
+                        <div class="container">
+                            <h1>Tabla de Ejercicios</h1>
 
-                                    if (count($ejercicios) > 0) {
-                                        echo '<table class="table table-striped mt-4">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Repeticiones</th>
-                            <th>Series</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-                                        foreach ($ejercicios as $ejercicio) {
-                                            echo '<tr>';
-                                            echo '<td>' . $ejercicio['nombre'] . '</td>';
-                                            echo '<td>' . $ejercicio['repeticiones'] . '</td>';
-                                            echo '<td>' . $ejercicio['series'] . '</td>';
-                                            echo '</tr>';
-                                        }
-                                        echo '</tbody></table>';
-                                    } else {
-                                        echo '<p>No hay ejercicios disponibles para esta rutina.</p>';
-                                    }
-                                }
-                                ?>
-                            </div>
+                            <?php if ($result->rowCount() > 0): ?>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Músculo</th>
+                                            <th>Equipo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php while ($row = $result->fetch(PDO::FETCH_ASSOC)): ?>
+                                            <tr>
+                                                <td>
+                                                    <?php echo $row["Nombre"]; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $row["Musculo"]; ?>
+                                                </td>
+                                                <td>
+                                                    <?php echo $row["Equipo"]; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    </tbody>
+                                </table>
+                            <?php else: ?>
+                                <p>No se encontraron resultados.</p>
+                            <?php endif; ?>
                         </div>
+                        <form action="ver_ejercicios.php" method="GET" class="mt-4">
+                            <div class="mb-3">
+                                <label for="grupoMuscular" class="form-label">Grupo Muscular:</label>
+                                <select name="grupoMuscular" id="grupoMuscular" class="form-select">
+                                    <?php
+                                    // Generar opciones del select con grupos musculares usando PHP
+                                    require '../database.php';
+                                    $sql = "SELECT * FROM grupo_muscular";
+                                    $result = $conn->query($sql);
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                        $idGrupoMuscular = $row['id_musculo'];
+                                        $nombreGrupoMuscular = $row['nombre'];
+                                        echo "<option value='$idGrupoMuscular'>$nombreGrupoMuscular</option>";
+                                    }
+                                    $conn = NULL;
+                                    ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </form>
+                        <form action="ver_ejercicios.php" method="GET" class="mt-4">
+                            <div class="mb-3">
+                                <label for="equipo" class="form-label">Equipo:</label>
+                                <select name="equipoId" id="equipoId" class="form-select">
+                                    <?php
+                                    // Generar opciones del select con grupos musculares usando PHP
+                                    require '../database.php';
+                                    $sql = "SELECT * FROM equipo";
+                                    $result = $conn->query($sql);
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                        $equipoId = $row['id_equipo'];
+                                        $nombreEquipo = $row['nombre'];
+                                        echo "<option value='$equipoId'>$nombreEquipo</option>";
+                                    }
+                                    $conn = NULL;
+                                    ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     </div>
 </body>

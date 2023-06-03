@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="styles_u.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Administrador</title>
+    <title>Usuario</title>
 </head>
 
 <body>
@@ -47,10 +47,6 @@
                                             <a href="ver_rutinas.php" class="nav-link px-0"> <span
                                                     class="d-none d-sm-inline">Ver rutinas</span></a>
                                         </li>
-                                        <li>
-                                            <a href="agregar_rutinas.php" class="nav-link px-0"> <span
-                                                    class="d-none d-sm-inline">Agregar rutinas</span></a>
-                                        </li>
                                     </ul>
                                 </li>
                                 <li>
@@ -66,10 +62,6 @@
                                         <li class="w-100">
                                             <a href="ver_ejercicios.php" class="nav-link px-0"> <span
                                                     class="d-none d-sm-inline">Ver ejercicios</span></a>
-                                        </li>
-                                        <li>
-                                            <a href="agregar_ejercicios.php" class="nav-link px-0"> <span
-                                                    class="d-none d-sm-inline">Agregar ejercicios</span></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -119,11 +111,6 @@
                                     echo '<tr>';
                                     echo '<td>' . $rutina['id_rutina'] . '</td>';
                                     echo '<td>' . $rutina['nombre'] . '</td>';
-                                    $contador = 0; 
-                                    if ($rutina['contador_entrenamientos'] !== null) {
-                                        $contador = $rutina['contador_entrenamientos'];
-                                    }
-                                    echo '<td>' . $contador . '</td>'; 
                                     echo '</tr>';
                                 }
                                 ?>
@@ -190,7 +177,6 @@
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </body>
 
