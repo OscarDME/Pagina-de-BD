@@ -7,15 +7,20 @@ if (isset($_SESSION['id_usuario'])) {
 require 'database.php';
 
 if (!empty($_POST['username']) && !empty($_POST['password'])) {
-    $records = $conn->prepare('SELECT id_usuario, password FROM usuario WHERE id_usuario = :username');
+    $records = $conn->prepare('SELECT id_usuario, password, tipo_usuario FROM usuario WHERE id_usuario = :username');
     $records->bindParam(':username', $_POST['username']);
     $records->execute();
     $results = $records->fetch(PDO::FETCH_ASSOC);
     if ( $results !== false && count($results) > 0 && password_verify($_POST['password'], $results['password'])) {
         $_SESSION['id_usuario'] = $results['id_usuario'];
-        header("Location: administrador/index.php");
+        $tipoUsuario = $results['tipo_usuario'];
+        if ($tipoUsuario == 2) {
+            header("Location: administrador/index.php");
+        } elseif ($tipoUsuario == 1) {
+            header("Location: usuarios/index.php");
+        }
       } else {
-        $message = 'Algo fue mal ingresado';
+        $message = 'El usuario o contraseña no existen :';
       }
 }
 ?>

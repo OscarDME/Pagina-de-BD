@@ -12,11 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':equipo', $equipo);
             $stmt->execute();
             $mensajeEquipo = "Equipo agregado correctamente.";
+            header("Location: agregar_ejercicios.php");
+            exit();
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
-        header("Location: agregar_ejercicios.php");
-        exit();
     }
 
     if (isset($_POST['musculo'])) {
@@ -51,6 +51,124 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: agregar_ejercicios.php");
         exit();
     }
+    if (isset($_POST['eliminar_musculo'])) {
+        $idMusculo = $_POST['id_musculo'];
+        $sql = "DELETE FROM grupo_muscular WHERE id_musculo = :id_musculo";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_musculo', $idMusculo);
+        $stmt->execute();
+
+        header("Location: agregar_ejercicios.php");
+        exit();
+    }
+    if (isset($_POST['eliminar_equipo'])) {
+        $idEquipo = $_POST['id_equipo'];
+        $sql = "DELETE FROM equipo WHERE id_equipo = :id_equipo";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_equipo', $idEquipo);
+        $stmt->execute();
+
+        header("Location: agregar_ejercicios.php");
+        exit();
+    }
+    if (isset($_POST['eliminar_ejercicio'])) {
+        $idEjercicio = $_POST['id_ejercicio'];
+        $sql = "DELETE FROM ejercicio WHERE id_ejercicio = :id_ejercicio";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id_ejercicio', $idEjercicio);
+        $stmt->execute();
+
+        header("Location: agregar_ejercicios.php");
+        exit();
+    }
+    if (isset($_POST['modificar_ejercicio'])) {
+        $idEjercicio = $_POST['id_ejercicio'];
+        $nombreEjercicio = $_POST['nombre_ejercicio'];
+        $fkMusculo = $_POST['fk_musculo'];
+        $fkEquipo = $_POST['fk_equipo'];
+
+        if ($nombreEjercicio === "") {
+            $sql = "SELECT nombre FROM ejercicio WHERE id_ejercicio = :id_ejercicio";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_ejercicio', $idEjercicio);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $nombreEjercicio = $resultado['nombre'];
+        }
+
+        if ($fkMusculo === "NULL") {
+            $sql = "SELECT fk_musculo FROM ejercicio WHERE id_ejercicio = :id_ejercicio";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_ejercicio', $idEjercicio);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $fkMusculo = $resultado['fk_musculo'];
+        }
+
+        if ($fkEquipo === "NULL") {
+            $sql = "SELECT fk_equipo FROM ejercicio WHERE id_ejercicio = :id_ejercicio";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_ejercicio', $idEjercicio);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $fkEquipo = $resultado['fk_equipo'];
+        }
+
+        $sql = "UPDATE ejercicio SET nombre = :nombre, fk_musculo = :fk_musculo, fk_equipo = :fk_equipo WHERE id_ejercicio = :id_ejercicio";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':nombre', $nombreEjercicio);
+        $stmt->bindParam(':fk_musculo', $fkMusculo);
+        $stmt->bindParam(':fk_equipo', $fkEquipo);
+        $stmt->bindParam(':id_ejercicio', $idEjercicio);
+        $stmt->execute();
+
+        header("Location: agregar_ejercicios.php");
+        exit();
+    }
+    if (isset($_POST['modificar_musculo'])) {
+        $idMusculo = $_POST['id_musculo'];
+        $nombreMusculo = $_POST['nombre_musculo'];
+    
+        if ($nombreMusculo === "") {
+            $sql = "SELECT nombre FROM grupo_muscular WHERE id_musculo = :id_musculo";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_musculo', $idMusculo);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $nombreMusculo = $resultado['nombre'];
+        }
+        $sql = "UPDATE grupo_muscular SET nombre = :nombre WHERE id_musculo = :id_musculo";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':nombre', $nombreMusculo);
+        $stmt->bindParam(':id_musculo', $idMusculo);
+        $stmt->execute();
+    
+        header("Location: agregar_ejercicios.php");
+        exit();
+    }
+    if (isset($_POST['modificar_equipo'])) {
+        $idEquipo = $_POST['id_equipo'];
+        $nombreEquipo = $_POST['nombre_equipo'];
+    
+        if ($nombreEquipo === "") {
+            $sql = "SELECT nombre FROM equipo WHERE id_equipo = :id_equipo";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_equipo', $idEquipo);
+            $stmt->execute();
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+            $nombreEquipo = $resultado['nombre'];
+        }
+    
+        $sql = "UPDATE equipo SET nombre = :nombre WHERE id_equipo = :id_equipo";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':nombre', $nombreEquipo);
+        $stmt->bindParam(':id_equipo', $idEquipo);
+        $stmt->execute();
+    
+        header("Location: agregar_ejercicios.php");
+        exit();
+    }
+    
 }
 ?>
 
@@ -218,6 +336,209 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <button type="submit" value="Submit" class="btn btn-primary btn-block"
                                             href="#">Insertar</button>
                                     </form>
+                                </div>
+                                <div class="row align-items-center">
+                                    <h3>Grupos Musculares</h3>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <?php
+                                                $sql = "SELECT * FROM grupo_muscular";
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->execute();
+                                                $grupo_musculares = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                ?>
+                                                <th>ID</th>
+                                                <th>Nombre</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($grupo_musculares as $grupo_muscular) { ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php echo $grupo_muscular['id_musculo']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $grupo_muscular['nombre']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <form action="agregar_ejercicios.php" method="POST">
+                                                            <input type="hidden" name="id_musculo"
+                                                                value="<?php echo $grupo_muscular['id_musculo']; ?>">
+                                                            <button type="submit" name="eliminar_musculo"
+                                                                class="btn btn-danger btn-sm">Eliminar</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                    <h3>Ejercicios</h3>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <?php
+                                                $sql = "SELECT * FROM ejercicio";
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->execute();
+                                                $ejercicios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                ?>
+                                                <th>ID/th>
+                                                <th>Nombre</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($ejercicios as $ejercicio) { ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php echo $ejercicio['id_ejercicio']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $ejercicio['nombre']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <form action="agregar_ejercicios.php" method="POST">
+                                                            <input type="hidden" name="id_ejercicio"
+                                                                value="<?php echo $ejercicio['id_ejercicio']; ?>">
+                                                            <button type="submit" name="eliminar_ejercicio"
+                                                                class="btn btn-danger btn-sm">Eliminar</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+
+                                    <h3>Equipos</h3>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <?php
+                                                $sql = "SELECT * FROM equipo";
+                                                $stmt = $conn->prepare($sql);
+                                                $stmt->execute();
+                                                $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                ?>
+                                                <th>ID</th>
+                                                <th>Equipo</th>
+                                                <th>Acción</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php foreach ($equipos as $equipo) { ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php echo $equipo['id_equipo']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $equipo['nombre']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <form action="agregar_ejercicios.php" method="POST">
+                                                            <input type="hidden" name="id_equipo"
+                                                                value="<?php echo $equipo['id_equipo']; ?>">
+                                                            <button type="submit" name="eliminar_equipo"
+                                                                class="btn btn-danger btn-sm">Eliminar</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row align-items-start">
+                                    <div class="col py-3">
+                                        <div class="container">
+                                            <h3>Modificar Grupo Muscular</h3>
+                                            <form action="agregar_ejercicios.php" method="POST">
+                                                <div class="form-group">
+                                                    <label for="id_musculo">ID:</label>
+                                                    <input type="text" class="form-control" id="id_musculo"
+                                                        name="id_musculo" placeholder="ID del grupo muscular">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="nombre_musculo">Nombre:</label>
+                                                    <input type="text" class="form-control" id="nombre_musculo"
+                                                        name="nombre_musculo" placeholder="Nombre del grupo muscular">
+                                                </div>
+                                                <button type="submit" name="modificar_musculo"
+                                                    class="btn btn-primary">Modificar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col py-3">
+                                        <div class="container">
+                                            <h3>Modificar Equipo</h3>
+                                            <form action="agregar_ejercicios.php" method="POST">
+                                                <div class="form-group">
+                                                    <label for="id_equipo">ID:</label>
+                                                    <input type="text" class="form-control" id="id_equipo"
+                                                        name="id_equipo" placeholder="ID del equipo">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="nombre_equipo">Nombre:</label>
+                                                    <input type="text" class="form-control" id="nombre_equipo"
+                                                        name="nombre_equipo" placeholder="Nombre del equipo">
+                                                </div>
+                                                <button type="submit" name="modificar_equipo"
+                                                    class="btn btn-primary">Modificar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center">
+                                        <div class="container">
+                                            <h3>Modificar Ejercicio</h3>
+                                            <form action="agregar_ejercicios.php" method="POST">
+                                                <div class="form-group">
+                                                    <label for="id_ejercicio">ID:</label>
+                                                    <input type="text" class="form-control" id="id_ejercicio"
+                                                        name="id_ejercicio" placeholder="ID del ejercicio">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="nombre_ejercicio">Nombre:</label>
+                                                    <input type="text" class="form-control" id="nombre_ejercicio"
+                                                        name="nombre_ejercicio" placeholder="Nombre del ejercicio">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="fk_musculo">Grupo Muscular:</label>
+                                                    <select class="form-control" id="fk_musculo" name="fk_musculo">
+                                                        <?php
+                                                        // Aquí obtienes los grupos musculares de la base de datos y los muestras como opciones en el desplegable
+                                                        $sql = "SELECT * FROM grupo_muscular";
+                                                        $stmt = $conn->prepare($sql);
+                                                        $stmt->execute();
+                                                        $grupo_musculares = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                        foreach ($grupo_musculares as $grupo_muscular) {
+                                                            echo '<option value="' . $grupo_muscular['id_musculo'] . '">' . $grupo_muscular['nombre'] . '</option>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="fk_equipo">Equipo:</label>
+                                                    <select class="form-control" id="fk_equipo" name="fk_equipo">
+                                                        <?php
+                                                        // Aquí obtienes los equipos de la base de datos y los muestras como opciones en el desplegable
+                                                        $sql = "SELECT * FROM equipo";
+                                                        $stmt = $conn->prepare($sql);
+                                                        $stmt->execute();
+                                                        $equipos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                                                        foreach ($equipos as $equipo) {
+                                                            echo '<option value="' . $equipo['id_equipo'] . '">' . $equipo['nombre'] . '</option>';
+                                                        }
+                                                        ?>
+                                                    </select>
+                                                </div>
+                                                <button type="submit" name="modificar_ejercicio"
+                                                    class="btn btn-primary">Modificar</button>
+                                            </form>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>

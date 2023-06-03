@@ -1,7 +1,18 @@
 <?php session_start(); ?>
 <?php
 require '../database.php';
-$sql = "SELECT * FROM ejerciciosPagina";
+if (isset($_GET['grupoMuscular'])) {
+    $grupoMuscular = $_GET['grupoMuscular'];
+    $sql = "CALL filtrar_ejercicios_por_grupo('$grupoMuscular')";
+}
+else if(isset($_GET['equipoId'])){
+    $equipo = $_GET['equipoId'];
+    $sql = "CALL filtrar_ejercicios_por_equipo('$equipo')";
+} 
+else {
+    $sql = "SELECT * FROM ejerciciospagina";
+}
+
 $result = $conn->query($sql);
 ?>
 <!DOCTYPE html>
@@ -105,25 +116,7 @@ $result = $conn->query($sql);
                         </div>
                     </div>
                     <div class="col py-3">
-                        <?php /*
-                   require '../database.php';
-                   $sql = "SELECT * FROM ejerciciosPagina";
-                   $result = $conn->query($sql);
-                   if ($result->rowCount() > 0) {
-                       echo "<table>";
-                       echo "<tr><th>Columna 1</th><th>Columna 2</th><th>Columna 3</th></tr>";
-                       while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                           echo "<tr>";
-                           echo "<td>" . $row["Nombre"] . "</td>";
-                           echo "<td>" . $row["Musculo"] . "</td>";
-                           echo "<td>" . $row["Equipo"] . "</td>";
-                           echo "</tr>";
-                       }
-                       echo "</table>";
-                   } else {
-                       echo "No se encontraron resultados.";
-                   }
-                   $conn = NULL; */
+                        <?php 
                         ?>
                         <div class="container">
                             <h1>Tabla de Ejercicios</h1>
@@ -157,10 +150,51 @@ $result = $conn->query($sql);
                                 <p>No se encontraron resultados.</p>
                             <?php endif; ?>
                         </div>
+                        <form action="ver_ejercicios.php" method="GET" class="mt-4">
+                            <div class="mb-3">
+                                <label for="grupoMuscular" class="form-label">Grupo Muscular:</label>
+                                <select name="grupoMuscular" id="grupoMuscular" class="form-select">
+                                    <?php
+                                    // Generar opciones del select con grupos musculares usando PHP
+                                    require '../database.php';
+                                    $sql = "SELECT * FROM grupo_muscular";
+                                    $result = $conn->query($sql);
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                        $idGrupoMuscular = $row['id_musculo'];
+                                        $nombreGrupoMuscular = $row['nombre'];
+                                        echo "<option value='$idGrupoMuscular'>$nombreGrupoMuscular</option>";
+                                    }
+                                    $conn = NULL;
+                                    ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </form>
+                        <form action="ver_ejercicios.php" method="GET" class="mt-4">
+                            <div class="mb-3">
+                                <label for="equipo" class="form-label">Equipo:</label>
+                                <select name="equipoId" id="equipoId" class="form-select">
+                                    <?php
+                                    // Generar opciones del select con grupos musculares usando PHP
+                                    require '../database.php';
+                                    $sql = "SELECT * FROM equipo";
+                                    $result = $conn->query($sql);
+                                    while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                                        $equipoId = $row['id_equipo'];
+                                        $nombreEquipo = $row['nombre'];
+                                        echo "<option value='$equipoId'>$nombreEquipo</option>";
+                                    }
+                                    $conn = NULL;
+                                    ?>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Filtrar</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
     </div>
 </body>

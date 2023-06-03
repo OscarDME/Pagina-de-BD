@@ -1,4 +1,64 @@
 <?php session_start(); ?>
+<?php
+require '../database.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nuevoEmail = $_POST['nuevo_email'];
+    $nuevoSexo = $_POST['nuevo_sexo'];
+    $nuevaEstatura = $_POST['nueva_estatura'];
+    $nuevoPeso = $_POST['nuevo_peso'];
+
+    require '../database.php';
+
+    $sql = "UPDATE usuario SET ";
+
+    $updateFields = array();
+    $params = array();
+
+    if (!empty($nuevoEmail)) {
+        $updateFields[] = "email = :email";
+        $params[':email'] = $nuevoEmail;
+    }
+    if (!empty($nuevoSexo)) {
+        $updateFields[] = "sexo = :sexo";
+        $params[':sexo'] = $nuevoSexo;
+    }
+    if (!empty($nuevaEstatura)) {
+        $updateFields[] = "estatura = :estatura";
+        $params[':estatura'] = $nuevaEstatura;
+    }
+    if (!empty($nuevoPeso)) {
+        $updateFields[] = "peso = :peso";
+        $params[':peso'] = $nuevoPeso;
+    }
+
+    if (empty($updateFields)) {
+        header('Location: perfil.php');
+        exit();
+    }
+
+    $sql .= implode(", ", $updateFields);
+    $sql .= " WHERE id_usuario = :id_usuario";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':id_usuario', $_SESSION['id_usuario']);
+    
+    $keys = array_keys($params);
+    for ($i = 0; $i < count($keys); $i++) {
+        $stmt->bindParam($keys[$i], $params[$keys[$i]]);
+    }
+
+    if ($stmt->execute()) {
+        // Redirigir al perfil después de la actualización exitosa
+        header('Location: perfil.php');
+        exit();
+    } else {
+        // Manejar el error en caso de que la actualización falle
+        echo "Error al actualizar el perfil. Por favor, inténtalo de nuevo.";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -106,43 +166,89 @@
                                     <h2>Usuario:
                                         <?php echo $_SESSION['id_usuario'] ?>
                                     </h2>
-                                    <?php
-                                    require '../database.php';
-                                    $sql = "SELECT email, sexo, estatura, fecha_nacimiento, tipo_usuario, peso FROM usuario WHERE id_usuario= '{$_SESSION['id_usuario']}'";
-                                    $result = $conn->query($sql);
-                                    $row = $result->fetch(PDO::FETCH_ASSOC);
+                                    <table class="table">
+                                        <tbody>
+                                            <?php
+                                            require '../database.php';
+                                            $sql = "SELECT email, sexo, estatura, fecha_nacimiento, tipo_usuario, peso FROM usuario WHERE id_usuario= '{$_SESSION['id_usuario']}'";
+                                            $result = $conn->query($sql);
+                                            $row = $result->fetch(PDO::FETCH_ASSOC);
 
-                                    $fechaNacimiento = new DateTime($row['fecha_nacimiento']);
-                                    $hoy = new DateTime();
-                                    $edad = $fechaNacimiento->diff($hoy)->y;
+                                            $fechaNacimiento = new DateTime($row['fecha_nacimiento']);
+                                            $hoy = new DateTime();
+                                            $edad = $fechaNacimiento->diff($hoy)->y;
 
-                                    echo "<p>Email: " . $row['email'] . "</p>";
-                                    if ($row['sexo'] == 'H') {
-                                        echo "<p>Sexo: Hombre</p>";
-                                    } else {
-                                        echo "<p>Sexo: Mujer</p>";
-                                    }
-                                    echo "<p>Estatura: " . $row['estatura'] . "cm </p>";
-                                    echo "<p>Edad: " . $edad . " años</p>";
-                                    echo "<p>Peso: " . $row['peso'] . "kg </p>";
-                                    if ($row['tipo_usuario'] == 1) {
-                                        echo "<p>Tipo de usuario: Usuario</p>";
-                                    } else {
-                                        echo "<p>Tipo de usuario: Administrador</p>";
-                                    }
-                                    ?>
-                                </div>
-                                <div class="col">
-                                    <img class="img-fluid" src="../assets/img/imagen2.jpg" alt="nada">
+                                            echo "<tr>
+        <td>Email:</td>
+        <td>" . $row['email'] . "</td>
+        <td>
+            <form action='perfil.php' method='POST'>
+                <input type='hidden' name='campo' value='email'>
+                <input type='text' name='nuevo_email'>
+                <button type='submit' class='btn btn-primary'>Modificar</button>
+            </form>
+        </td>
+    </tr>";
+                                            echo "<tr>
+    <td>Sexo:</td>
+    <td>" . ($row['sexo'] == 'H' ? 'Hombre' : 'Mujer') . "</td>
+    <td>
+        <form action='perfil.php' method='POST'>
+            <input type='hidden' name='campo' value='sexo'>
+            <select name='nuevo_sexo'>
+                <option value='H'>Hombre</option>
+                <option value='M'>Mujer</option>
+            </select>
+            <button type='submit' class='btn btn-primary'>Modificar</button>
+        </form>
+    </td>
+</tr>";
+
+                                            echo "<tr>
+    <td>Estatura:</td>
+    <td>" . $row['estatura'] . "cm</td>
+    <td>
+        <form action='perfil.php' method='POST'>
+            <input type='hidden' name='campo' value='estatura'>
+            <input type='text' name='nueva_estatura'>
+            <button type='submit' class='btn btn-primary'>Modificar</button>
+        </form>
+    </td>
+</tr>";
+                                            echo "<tr>
+                                                    <td>Edad:</td>
+                                                    <td>" . $edad . " años</td>
+                                                    <td></td>
+                                                </tr>";
+                                                echo "<tr>
+                                                <td>Peso:</td>
+                                                <td>" . $row['peso'] . "kg</td>
+                                                <td>
+                                                    <form action='perfil.php' method='POST'>
+                                                        <input type='hidden' name='campo' value='peso'>
+                                                        <input type='text' name='nuevo_peso'>
+                                                        <button type='submit' class='btn btn-primary'>Modificar</button>
+                                                    </form>
+                                                </td>
+                                            </tr>";
+                                            echo "<tr>
+                                                    <td>Tipo de usuario:</td>
+                                                    <td>" . ($row['tipo_usuario'] == 1 ? 'Usuario' : 'Administrador') . "</td>
+                                                    <td></td>
+                                                </tr>";
+                                            ?>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-
                         </div>
+                    </div>
+                    <div class="col py-3">
+                    <img class="img-fluid" src="../assets/img/imagen2.jpg" alt="nada">
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     </div>
 </body>
